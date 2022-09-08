@@ -81,8 +81,70 @@ def print_labels():
         print(f'An error occurred: {error}')
 
 
+def download_kaly_mora():
+
+    creds = get_creds()
+
+    try:
+        # Call the Gmail API
+        service = build('gmail', 'v1', credentials=creds)
+        results = service.users().messages().list(userId='me', labelIds=['Label_1006420016475313948'], q="is:unread").execute()
+        messages = results.get('messages', []);
+        if messages:
+            message = messages[-1]
+
+            msg = service.users().messages().get(userId='me', id=message['id']).execute()
+            print(msg)
+            # msg = service.users().messages().modify(userId='me', id=res['id'], body={'removeLabelIds': ['UNREAD']}).execute()
+
+            for part in msg['payload']['parts']:
+                print(part)
+                try:
+                    if part["body"].get('attachmentId'):
+                        print("Geting attacment")
+                        GetAttachments(service,"me",message['id'])
+                        print("Geting attacment: OK")
+
+                    # mark the message as read (optional)
+                    msg = service.users().messages().modify(userId='me', id=message['id'],body={'removeLabelIds': ['UNREAD']}).execute()
+                except BaseException as error:
+                    print(f'An error occurred: {error}')
+
+    except HttpError as error:
+        # Handle errors from gmail API.
+        print(f'An error occurred: {error}')
 
 
+
+import base64
+from apiclient import errors
+
+def GetAttachments(service, user_id, msg_id):
+    """Get and store attachment from Message with given id.
+
+    :param service: Authorized Gmail API service instance.
+    :param user_id: User's email address. The special value "me" can be used to indicate the authenticated user.
+    :param msg_id: ID of Message containing attachment.
+    """
+    try:
+        message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+
+        for part in message['payload']['parts']:
+            if part['filename']:
+                if 'data' in part['body']:
+                    data = part['body']['data']
+                else:
+                    att_id = part['body']['attachmentId']
+                    att = service.users().messages().attachments().get(userId=user_id, messageId=msg_id,id=att_id).execute()
+                    data = att['data']
+                file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
+                path = "F:\kaly_mora\kaly_mora"
+
+                with open(path, 'wb') as f:
+                    f.write(file_data)
+
+    except Exception as error:
+        print(f'An error occurred: {error}')
 
 
 
