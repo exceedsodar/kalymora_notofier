@@ -200,3 +200,7 @@ def readEmails():
                                 print(f'An error occurred: {error}')
     except Exception as error:
         print(f'An error occurred: {error}')
+
+
+if __name__=="__main__":
+    print_labels()

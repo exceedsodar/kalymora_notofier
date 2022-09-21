@@ -9,8 +9,8 @@ import tools as tool
 
 data = tool.get_data()
 # Credentials
-skype_user = data.get("user")
-skype_pwd = data.get("pwd")
+skype_user = data.get("sk_user")
+skype_pwd = data.get("sk_pwd")
 
 sk = skpy.Skype(skype_user, skype_pwd)
 # Dates management
@@ -48,6 +48,8 @@ def send_file_skype(skype_id,path,file_name):
     sk = skpy.Skype(skype_user, skype_pwd)  # connect to Skype
     contact = sk.contacts[skype_id].chat  # 1-to-1 conversation
     print("sending file")
+    print(path)
+    print(file_name)
     contact.sendFile(open(path, "rb"), file_name)
 
 
@@ -63,13 +65,13 @@ def send_rappel(skype_id):
     # sk.chats  # your conversations
     contact = sk.chats[skype_id]  # 1-to-1 conversation
 
-    msg = '<at id="*">all</at> Rapel kely so dia nisy nanadino commande :)'
+    msg = 'Hello <at id="*">all</at>. Rappel kely so dia nisy nanadino commande :D'
     print(msg)
     contact.sendMsg(msg,rich=True)  # plain-text message
 
 
 if __name__ == "__main__":
     data = tool.get_data()
-    kaly_mora_id = data["jira_skype_ids"]["kaly"][1]
+    kaly_mora_id = data["jira_skype_ids"]["KayMora"][1]
 
     send_rappel(kaly_mora_id)
