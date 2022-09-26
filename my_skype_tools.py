@@ -4,6 +4,7 @@ import skpy
 import time
 from datetime import date, timedelta
 import tools as tool
+from retry import retry
 
 # # ch_group = sk.chats.chat("19:ffd117e2bcb74a259c0c06049545908e@thread.skype") # DIR SYN RESTREINT
 
@@ -19,17 +20,21 @@ yesterday = today - timedelta(days=1)
 period = today.strftime("%m%y")
 yesterday_th_tag = yesterday.strftime("%d/%m/%y")
 
+@retry(delay=5, tries=5)
 def send_msg_skype(skype_id,msg,rich=False):
+    try:
+        sk = skpy.Skype(skype_user, skype_pwd)  # connect to Skype
 
-    sk = skpy.Skype(skype_user, skype_pwd)  # connect to Skype
+        # sk.user  # you
+        # sk.contacts  # your contacts
+        # sk.chats  # your conversations
+        contact = sk.contacts[skype_id].chat  # 1-to-1 conversation
 
-    # sk.user  # you
-    # sk.contacts  # your contacts
-    # sk.chats  # your conversations
-    contact = sk.contacts[skype_id].chat  # 1-to-1 conversation
-
-    print("sending msg")
-    contact.sendMsg(msg,rich)  # plain-text message
+        print("sending msg")
+        contact.sendMsg(msg,rich)  # plain-text message
+    except Exception as e:
+        print("Error!. retring")
+        raise
 
 def send_msg_grp_skype(skype_id,msg,rich=False):
 
