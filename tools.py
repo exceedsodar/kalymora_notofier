@@ -1,4 +1,5 @@
 import json
+import datetime
 
 def get_data():
     # Opening JSON file
@@ -11,3 +12,10 @@ def get_data():
     # Closing file
     f.close()
     return data
+
+def is_weekend():
+    weekno = datetime.datetime.today().weekday()
+    if weekno < 5:
+        return False
+    else:  # 5 Sat, 6 Sun
+        return  True

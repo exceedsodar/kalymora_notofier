@@ -63,6 +63,9 @@ def print_recent():
         print(id)
 
 def send_rappel(skype_id):
+    if tool.is_weekend():
+      return  False
+
     sk = skpy.Skype(skype_user, skype_pwd)  # connect to Skype
 
     # sk.user  # you

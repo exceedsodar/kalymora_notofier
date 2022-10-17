@@ -22,6 +22,10 @@ def send_pdf_to_skype(skype_id):
         raise
 
 if __name__=="__main__":
+    if tool.is_weekend():
+        print("c'est le week end")
+        exit()
+
     data = tool.get_data()
     anais_id = data["jira_skype_ids"]["Anais"][1]
     marga = data["jira_skype_ids"]["Margarette"][1]
